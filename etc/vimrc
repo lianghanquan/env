@@ -3,6 +3,11 @@ set autoindent
 set shiftwidth=4
 set expandtab
 set number
+
+" file codings
 set fileencodings=utf-8,gb2312,gbk,gb18030
 set termencoding=utf-8
-set encoding=utf-
+set encoding=utf-8
+
+set paste
+set cursorline
