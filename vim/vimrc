@@ -1,49 +1,96 @@
-set tabstop=4
-set autoindent
-set shiftwidth=4
-set softtabstop=4
-set expandtab
-set number
+"关闭兼容模式
+set nocompatible
 
-set paste
+"模仿windows快捷键 Ctrl+A全选、Ctrl+C复制、Ctrl+V粘贴
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
 
-" file codings
-set fileencodings=utf-8,gb2312,gbk,gb18030
-set termencoding=utf-8
+" 语法高亮
+set syntax=on
+
+" 去掉输入错误的提示声音
+set noeb
+
+" gvim字体设置
+"set guifont=Courier_New:h10:cANSI
+set guifont=Consolas:h10:cANSI
+
+" gvim内部编码
 set encoding=utf-8
 
-" Python comment
-let g:python_author = 'watchsky'
-let g:python_email  = 'watchsky126@hotmail.com'
-function InsertPythonComment()
-    exe 'normal'.1.'G'
-    let line = getline('.')
-    if line =~ '^#!.*$' || line =~ '^#.*coding:.*$'
-        return
+" 当前编辑的文件编码
+set fileencoding=utf-8
+
+" gvim打开支持编码的文件
+set fileencodings=ucs-bom,utf-8,gbk,cp936,gb2312,big5,euc-jp,euc-kr,latin1
+"set langmenu=zh_CN
+"let $LANG = 'zh_CN.UTF-8'
+
+" 解决consle输出乱码
+language messages zh_CN.utf-8
+
+" 设置终端编码为gvim内部编码encoding
+let &termencoding=&encoding
+
+" 防止特殊符号无法正常显示
+set ambiwidth=double
+
+" 缩进尺寸为4个空格
+set shiftwidth=4
+
+" tab宽度为4个字符
+set tabstop=4
+
+" 编辑时将所有tab替换为空格
+set expandtab
+
+" 按一次backspace就删除4个空格
+set smarttab
+
+" 不生成备份文件
+set nobackup
+
+" 开启行号标记
+set number
+
+" 配色方案
+colo desert
+
+" 关闭上侧工具栏
+set guioptions-=T
+
+" 关闭右侧滚动条
+"set guioptions-=r
+
+" 开启自动缩进
+set autoindent
+
+" 解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let eq = ''
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      let cmd = '""' . $VIMRUNTIME . '\diff"'
+      let eq = '"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
     endif
-    normal O
-    call setline('.', '#!/usr/bin/env python')
-    normal o
-    call setline('.', '# -*- coding:utf-8 -*-')
-    normal o
-    call setline('.', '#')
-    normal o
-    call setline('.', '#   Author  :   '.g:python_author)
-    normal o
-    call setline('.', '#   E-mail  :   '.g:python_email)
-    normal o
-    call setline('.', '#   Date    :   '.strftime("%y/%m/%d %H:%M:%S"))
-    normal o
-    call setline('.', '#   Desc    :   ')
-    normal o
-    call setline('.', '#')
-    normal o
-    call cursor(7, 17)
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
 endfunction
-function InsertCommentWhenOpen()
-    if a:lastline == 1 && !getline('.')
-        call InsertPythonComment()
-    end
-endfunc
-au FileType python :%call InsertCommentWhenOpen()
-au FileType python map <F4> :call InsertPythonComment()<cr>
