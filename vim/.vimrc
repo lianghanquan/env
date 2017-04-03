@@ -43,7 +43,7 @@ set nobackup
 set number
 
 " 配色方案
-colo desert
+"colo desert
 
 " 开启自动缩进
 set autoindent
