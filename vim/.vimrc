@@ -48,4 +48,3 @@ set number
 " 开启自动缩进
 set autoindent
 
-set paste
